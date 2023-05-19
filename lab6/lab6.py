@@ -70,7 +70,7 @@ def main():
     mode = input("Выберите режим программы: '1' или '2': ")
     days = 7
 
-    if mode.lower() == '1':
+    if mode == '1':
         total_calories = 0
 
         for day in range(days):
@@ -84,7 +84,7 @@ def main():
             ice_creams.remove(optimal_combination[0])
 
         print("Общее количество потребленных калорий:", total_calories)
-    elif mode.lower() == '2':
+    elif mode == '2':
         total_calories = 0
 
         for day in range(days):

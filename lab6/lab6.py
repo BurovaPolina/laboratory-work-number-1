@@ -6,15 +6,10 @@
 В холодильнике 10 брикетов мороженого разного вида. Ребенку разрешается взять вечером не более 2 брикетов.
 Подготовьте различные варианты поедания мороженного ребенком на неделю."""
 
-import random
 
-
-def calculate_total_calories(combination):
-    return sum(ice_cream[2] for ice_cream in combination)
-
-
-def main():
-    ice_creams = [
+# вернуть полный список для разных вариантов
+def get_full_list():
+    return [
         ("Шоколад", "качественное", 100),
         ("Банан", "некачественное", 150),
         ("Клубника", "некачественное", 120),
@@ -27,50 +22,69 @@ def main():
         ("Сыр", "качественное", 60),
     ]
 
+
+# получить количество каллорий для списка combination
+def calculate_total_calories(combination):
+    return sum(ice_cream[2] for ice_cream in combination)
+
+
+# выборка для всех вариантов от текущего day
+def default_selection(ice_creams, day, days):
+    for sub_day in range(day, days):
+        # проходим для каждого по выборке от 0 до 2
+        total_calories = 0
+        for selection in range(3):
+            print('День:', sub_day + 1)
+            if len(ice_creams[:selection]) == 0:
+                print('список пуст, количесиво калорий 0')
+            else:
+                total_calories += calculate_total_calories(ice_creams[selection:])
+                print('количество калорий в день', sub_day, ' :', calculate_total_calories(ice_creams[selection:]))
+                print('ice_creams:', len(ice_creams[:selection]), ice_creams[:selection])
+            del ice_creams[:selection]
+    return total_calories
+
+
+def main():
     days = 7
-    total_calories = 0
-
+    print("==========================================")
     print("Берем мороженое без ограничения от 0 до 2")
-
+    print("==========================================")
+    total_calories = 0
+    # проходим по дням каждый с каждым
     for day in range(days):
-        daily_portion = random.randint(0, 2)
-        print("День", day + 1)
-        # берем несколько из списка от 0 до 2
-        portion_list = ice_creams[:daily_portion]
-        # удаляем из списка то что съели
-        del ice_creams[:daily_portion]
-        print('список на день: ', portion_list)
-        daily_calories = calculate_total_calories(portion_list)
-        print("Количество калорий в день: ", daily_calories)
+        ice_creams = get_full_list()
 
-        total_calories += daily_calories
+        total_calories += default_selection(ice_creams, day, days)
 
-    print("Общее количество потребленных калорий не благоприятный:", total_calories)
+    print('общее количество калорий: ', total_calories, '\n\n')
+
+    print("==========================================")
+    print("Берем мороженое сначало с минимальными каллориями")
+    print("==========================================")
 
     total_calories = 0
-
-    print("\n\n\nБерем одно из (от 0 до 2) мороженое с наименьшим колличеством каллорий")
-
+    # проходим по дням каждый с каждым
     for day in range(days):
-        daily_portion = random.randint(0, 2)
-        print("День", day + 1)
-        # берем несколько из списка от 0 до 2
-        portion_list = ice_creams[:daily_portion]
-        print('список на день: ', portion_list)
-        # если взяли 2 то предпочтение тому что с минимальными каллориями
-        if len(portion_list) > 1:
-            ice_cream = sorted(portion_list, key=lambda ice_cream: ice_cream[2])[0]
-            daily_calories = ice_cream[2]
-            # удаляем из списка то что съели
-            ice_creams.remove(ice_cream)
-        elif len(portion_list) == 1:
-            daily_calories = portion_list[0][2]
-        else:
-            daily_calories = 0
+        ice_creams = get_full_list()
+        print('общее количество калорий: ', total_calories, '\n\n')
+        # сортируем предпочтение тем что с минимальными каллориями
+        ice_creams = sorted(ice_creams, key=lambda ice_cream: ice_cream[2])
+        total_calories += default_selection(ice_creams, day, days)
+    print('общее количество калорий: ', total_calories, '\n\n')
 
-        print("Количество калорий в день: ", daily_calories)
-        total_calories += daily_calories
+    print("==========================================")
+    print("Берем мороженое сначало качественное")
+    print("==========================================")
 
-    print("Общее количество потребленных калорий не благоприятный:", total_calories)
+    # проходим по дням каждый с каждым
+    for day in range(days):
+        ice_creams = get_full_list()
 
- main()
+        # сортируем предпочтение качественному
+        ice_creams = sorted(ice_creams, key=lambda ice_cream: ice_cream[1])
+        total_calories += default_selection(ice_creams, day, days)
+    print('общее количество калорий: ', total_calories)
+
+
+main()
